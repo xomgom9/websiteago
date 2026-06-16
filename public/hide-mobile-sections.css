@@ -1,0 +1,7 @@
+/* Hide selected sections on mobile devices */
+
+@media (max-width: 768px) {
+  .receiving-products {
+    display: none !important;
+  }
+}
