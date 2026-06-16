@@ -73,4 +73,39 @@
   .reel-comment-form {
     display: none !important;
   }
+
+  .offer-popup-backdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+    min-height: 100dvh !important;
+    padding: 14px !important;
+    overflow-y: auto !important;
+  }
+
+  .offer-popup {
+    width: min(94vw, 390px) !important;
+    max-height: calc(100dvh - 28px) !important;
+    margin: auto !important;
+    transform: none !important;
+    overflow-y: auto !important;
+    border-radius: 16px !important;
+  }
+
+  .offer-popup-visual,
+  .offer-popup-form-panel {
+    min-height: auto !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .offer-popup-backdrop {
+    padding: 10px !important;
+  }
+
+  .offer-popup {
+    width: min(94vw, 360px) !important;
+    max-height: calc(100dvh - 20px) !important;
+  }
 }
