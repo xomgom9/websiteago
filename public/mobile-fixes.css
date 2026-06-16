@@ -11,15 +11,15 @@
   }
 
   .section {
-    padding-left: 22px !important;
-    padding-right: 22px !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
     padding-top: 34px !important;
     padding-bottom: 34px !important;
   }
 
   .section-header {
-    width: 100%;
-    max-width: 520px;
+    width: 100% !important;
+    max-width: 100% !important;
     margin-left: auto !important;
     margin-right: auto !important;
     margin-bottom: 18px !important;
@@ -27,24 +27,30 @@
   }
 
   .section-header h2,
+  .section h2,
   .final-cta h2,
   .happy-copy h3,
   .fibroid-title-card h2,
-  .form-shell form h2 {
-    max-width: 14ch;
+  .form-shell form h2,
+  .support-card h2 {
+    width: 100% !important;
+    max-width: 100% !important;
     margin-left: auto !important;
     margin-right: auto !important;
     text-align: center !important;
-    font-size: clamp(30px, 8vw, 40px) !important;
-    line-height: 1.12 !important;
-    letter-spacing: -0.02em !important;
+    font-size: clamp(24px, 6.2vw, 31px) !important;
+    line-height: 1.08 !important;
+    letter-spacing: -0.035em !important;
     text-wrap: balance;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
   }
 
   .section-header p:not(.eyebrow),
   .hero-subtitle,
   .final-cta p {
-    max-width: 34ch;
+    max-width: 36ch;
     margin-left: auto !important;
     margin-right: auto !important;
     text-align: center !important;
@@ -169,8 +175,8 @@
 
   .product-catalog .section-header,
   .customer-trust-intro .section-header {
-    padding-left: 22px !important;
-    padding-right: 22px !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
   }
 
   .catalog-card {
@@ -210,22 +216,26 @@
 
 @media (max-width: 430px) {
   .section {
-    padding-left: 18px !important;
-    padding-right: 18px !important;
+    padding-left: 22px !important;
+    padding-right: 22px !important;
   }
 
   .section-header h2,
+  .section h2,
   .final-cta h2,
   .happy-copy h3,
   .fibroid-title-card h2,
-  .form-shell form h2 {
-    max-width: 13ch;
-    font-size: clamp(28px, 8.2vw, 36px) !important;
-    line-height: 1.1 !important;
+  .form-shell form h2,
+  .support-card h2 {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: clamp(21px, 5.7vw, 25px) !important;
+    line-height: 1.08 !important;
+    letter-spacing: -0.04em !important;
   }
 
   .section-header p:not(.eyebrow) {
-    max-width: 31ch;
+    max-width: 34ch;
   }
 
   .card-grid.six,
@@ -255,5 +265,24 @@
 
   .cta span {
     max-width: 22ch !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .section-header h2,
+  .section h2,
+  .final-cta h2,
+  .happy-copy h3,
+  .fibroid-title-card h2,
+  .form-shell form h2,
+  .support-card h2 {
+    font-size: 21px !important;
+    line-height: 1.08 !important;
+    letter-spacing: -0.045em !important;
   }
 }
