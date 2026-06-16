@@ -1,0 +1,197 @@
+/* Mobile fixes for the customer proof reel lightbox */
+
+@media (max-width: 768px) {
+  .reel-lightbox {
+    align-items: start !important;
+    place-items: start center !important;
+    padding: 8px !important;
+    overflow-y: auto !important;
+    background: rgba(235, 239, 244, 0.98) !important;
+  }
+
+  .reel-shell {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto auto !important;
+    gap: 8px !important;
+    width: min(100%, 390px) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  .reel-video {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    aspect-ratio: 9 / 14.5 !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    background: #fff !important;
+  }
+
+  .reel-video img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: center top !important;
+    background: #fff !important;
+  }
+
+  .reel-video::after {
+    height: 28% !important;
+    background: linear-gradient(180deg, transparent 0%, rgba(45, 15, 31, 0.26) 42%, rgba(45, 15, 31, 0.62) 100%) !important;
+  }
+
+  .reel-caption {
+    left: 10px !important;
+    right: 10px !important;
+    bottom: 10px !important;
+    padding: 9px 10px !important;
+    border-radius: 10px !important;
+    background: rgba(45, 15, 31, 0.58) !important;
+    backdrop-filter: blur(3px) !important;
+  }
+
+  .reel-caption strong {
+    display: block !important;
+    font-size: 13px !important;
+    line-height: 1.15 !important;
+  }
+
+  .reel-caption p {
+    margin-top: 5px !important;
+    font-size: 12px !important;
+    line-height: 1.28 !important;
+  }
+
+  .reel-close {
+    top: 10px !important;
+    right: 10px !important;
+    width: 38px !important;
+    height: 38px !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: var(--dark-plum) !important;
+    z-index: 10 !important;
+  }
+
+  .reel-sound,
+  .reel-search {
+    top: 10px !important;
+    width: 34px !important;
+    height: 34px !important;
+    background: rgba(45, 45, 45, 0.64) !important;
+    z-index: 8 !important;
+  }
+
+  .reel-sound {
+    left: 10px !important;
+  }
+
+  .reel-search {
+    right: 54px !important;
+  }
+
+  .reel-actions {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0 !important;
+    width: 100% !important;
+    padding: 8px 10px !important;
+    border-radius: 12px !important;
+    background: #eef6f7 !important;
+  }
+
+  .reel-actions button {
+    gap: 3px !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+  }
+
+  .reel-actions svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .reel-comments {
+    display: grid !important;
+    grid-template-rows: auto !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 12px !important;
+    border-left: 0 !important;
+    border-radius: 14px !important;
+    background: #fff !important;
+  }
+
+  .reel-author {
+    padding-bottom: 10px !important;
+  }
+
+  .reel-author strong,
+  .reel-comments article strong {
+    font-size: 13px !important;
+    line-height: 1.15 !important;
+  }
+
+  .reel-author span,
+  .reel-sort,
+  .reel-comments article span {
+    font-size: 11px !important;
+  }
+
+  .reel-author p,
+  .reel-comments article p {
+    margin: 5px 0 !important;
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+  }
+
+  .reel-comments article {
+    grid-template-columns: 34px minmax(0, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .reel-comment-avatar {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .reel-comment-form {
+    grid-template-columns: minmax(0, 1fr) 38px !important;
+    gap: 7px !important;
+    padding-top: 8px !important;
+  }
+
+  .reel-comment-form input {
+    min-height: 38px !important;
+    font-size: 13px !important;
+  }
+
+  .reel-comment-form button {
+    width: 38px !important;
+    height: 38px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .reel-lightbox {
+    padding: 6px !important;
+  }
+
+  .reel-shell {
+    width: 100% !important;
+  }
+
+  .reel-video {
+    aspect-ratio: 9 / 15.2 !important;
+  }
+
+  .reel-caption p {
+    font-size: 11.5px !important;
+  }
+}
