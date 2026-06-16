@@ -4040,9 +4040,10 @@ textarea:focus {
   }
 
   .hero-visual > img:first-child {
-    max-height: 360px;
-    object-fit: cover;
-    object-position: top center;
+    max-height: none;
+    object-fit: contain;
+    width: 100%;
+    height: auto;
   }
 
   .hero-visual > img:first-child,
@@ -4217,7 +4218,6 @@ textarea:focus {
   .split img {
     max-height: 220px;
     object-fit: cover;
-    object-position: center center;
   }
 
   .catalog-card img,
@@ -4225,8 +4225,7 @@ textarea:focus {
   .benefit-image-box,
   .authority-grid img,
   .receiving-grid img {
-    max-height: 180px;
-    object-position: center center;
+    max-height: 150px;
   }
 
   .product-stage {

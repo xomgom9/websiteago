@@ -13,3 +13,4 @@ preview-*.png
 audit-*.png
 reference-*.png
 vite-dev.*.log
+check-mobile.mjs
