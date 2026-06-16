@@ -1,0 +1,73 @@
+(() => {
+  const values = [4.5, 4.6, 4.7, 4.8, 4.9, 5.0];
+
+  function hashText(text) {
+    let hash = 0;
+    for (let i = 0; i < text.length; i += 1) {
+      hash = ((hash << 5) - hash + text.charCodeAt(i)) | 0;
+    }
+    return Math.abs(hash);
+  }
+
+  function ratingFor(seed) {
+    return values[hashText(seed) % values.length];
+  }
+
+  function makeStar(className) {
+    const star = document.createElement('span');
+    star.className = `star ${className}`;
+    star.textContent = '★';
+    return star;
+  }
+
+  function makeRatingNode(rating) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'comment-rating';
+    wrapper.setAttribute('aria-label', `${rating.toFixed(1)} out of 5 star customer rating`);
+
+    const stars = document.createElement('span');
+    stars.className = 'comment-rating-stars';
+    stars.setAttribute('aria-hidden', 'true');
+
+    const fullStars = Math.floor(rating);
+    const hasHalf = rating % 1 >= 0.5 && fullStars < 5;
+    for (let i = 0; i < 5; i += 1) {
+      const type = i < fullStars ? 'full' : i === fullStars && hasHalf ? 'half' : 'empty';
+      stars.appendChild(makeStar(type));
+    }
+
+    const score = document.createElement('span');
+    score.className = 'comment-rating-score';
+    score.textContent = `${rating.toFixed(1)}/5`;
+
+    wrapper.appendChild(stars);
+    wrapper.appendChild(score);
+    return wrapper;
+  }
+
+  function decorateReviewCards() {
+    const cards = document.querySelectorAll('.stories .comment-card');
+    cards.forEach((card) => {
+      if (card.querySelector('.comment-rating')) return;
+      const meta = card.querySelector('.comment-meta');
+      if (!meta) return;
+      const name = meta.querySelector('strong')?.textContent?.trim() || '';
+      const status = meta.querySelector('span')?.textContent?.trim() || '';
+      const rating = ratingFor(`${name}-${status}`);
+      meta.insertAdjacentElement('afterend', makeRatingNode(rating));
+    });
+  }
+
+  function start() {
+    decorateReviewCards();
+    const observer = new MutationObserver(decorateReviewCards);
+    observer.observe(document.body, { childList: true, subtree: true });
+    window.setInterval(decorateReviewCards, 1200);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+})();
