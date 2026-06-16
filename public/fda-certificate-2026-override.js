@@ -1,5 +1,5 @@
 (() => {
-  const FDA_2026_SRC = "/assets/fda-certificate-2026.svg?v=20260616";
+  const FDA_2026_SRC = "/assets/fda-certificate-2026-image.webp?v=20260616-2";
 
   function swapFdaCertificate() {
     const images = document.querySelectorAll('.cert-image-fda img, img[alt*="FDA" i]');
