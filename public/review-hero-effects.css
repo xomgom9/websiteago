@@ -1,10 +1,9 @@
-/* Rating stars and text-focused hero effects */
+/* Rating stars, headline emphasis and button styling */
 .hero {
   position: relative;
   isolation: isolate;
 }
 
-/* Keep the hero clean: effects are applied directly to the headline text. */
 .hero::before,
 .hero::after {
   display: none !important;
@@ -19,46 +18,74 @@
 .hero h1 {
   position: relative;
   display: inline-block;
-  padding-bottom: 0.18em;
-  background: linear-gradient(90deg, #2d0f1f 0%, #7a003c 32%, #e61e6e 52%, #7a003c 70%, #2d0f1f 100%);
-  background-size: 230% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 12px 34px rgba(122, 0, 60, 0.13);
-  animation: heroTextShine 4.8s ease-in-out infinite;
+  padding-bottom: 0;
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  color: #2d0f1f !important;
+  text-shadow: 0 12px 34px rgba(122, 0, 60, 0.12);
+  animation: none !important;
 }
 
-.hero h1::before {
-  content: "";
-  position: absolute;
-  left: -0.02em;
-  right: -0.02em;
-  bottom: 0.02em;
-  height: clamp(7px, 0.9vw, 12px);
-  border-radius: 999px;
-  background: linear-gradient(90deg, #ffc247 0%, #ff8fb3 36%, #e61e6e 58%, #ffc247 100%);
-  background-size: 240% 100%;
-  box-shadow: 0 8px 20px rgba(230, 30, 110, 0.23), 0 0 18px rgba(255, 194, 71, 0.33);
-  transform-origin: left center;
-  animation: heroUnderlineSweep 3.6s ease-in-out infinite;
-}
-
+.hero h1::before,
 .hero h1::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0.02em;
-  width: 23%;
-  height: clamp(7px, 0.9vw, 12px);
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
-  filter: blur(0.2px);
-  animation: heroUnderlineGlint 2.6s ease-in-out infinite;
+  content: none !important;
+  display: none !important;
+}
+
+.hero-highlight {
+  display: inline-block;
+  padding: 0.01em 0.16em 0.08em;
+  margin: 0 0.04em;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(135deg, #7a003c 0%, #9d1b70 45%, #4b1979 100%);
+  box-shadow: 0 10px 24px rgba(122, 0, 60, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+  transform-origin: center;
+  animation: heroPhrasePop 2.8s ease-in-out infinite;
+}
+
+.hero-highlight-years {
+  background: linear-gradient(135deg, #4b1979 0%, #7a003c 45%, #e61e6e 100%);
+  animation-delay: 0.38s;
 }
 
 .hero-subtitle {
   position: relative;
+}
+
+.hero-subtitle::after {
+  content: none !important;
+  display: none !important;
+}
+
+.cta,
+.cta-secondary,
+.cta-outline,
+.cta-soft,
+.cta-gold,
+.cta-glow {
+  border: 0 !important;
+  border-radius: 5px !important;
+  background: linear-gradient(135deg, #7a003c 0%, #5a1b78 52%, #3b0f5f 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(75, 25, 121, 0.23) !important;
+}
+
+.cta:hover,
+.cta-secondary:hover,
+.cta-outline:hover,
+.cta-soft:hover,
+.cta-gold:hover,
+.cta-glow:hover {
+  background: linear-gradient(135deg, #8f0f52 0%, #6b2490 52%, #45116f 100%) !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+}
+
+.cta::after {
+  color: #fff !important;
 }
 
 .comment-card.notification-card {
@@ -130,53 +157,21 @@
   white-space: nowrap;
 }
 
-@keyframes heroTextShine {
+@keyframes heroPhrasePop {
   0%, 100% {
-    background-position: 0% 50%;
+    transform: translateY(0) scale(1);
+    box-shadow: 0 10px 24px rgba(122, 0, 60, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.18);
   }
   50% {
-    background-position: 100% 50%;
-  }
-}
-
-@keyframes heroUnderlineSweep {
-  0%, 100% {
-    background-position: 0% 50%;
-    transform: scaleX(0.92);
-    opacity: 0.9;
-  }
-  50% {
-    background-position: 100% 50%;
-    transform: scaleX(1);
-    opacity: 1;
-  }
-}
-
-@keyframes heroUnderlineGlint {
-  0% {
-    transform: translateX(-15%) scaleX(0.7);
-    opacity: 0;
-  }
-  18% {
-    opacity: 0.9;
-  }
-  58% {
-    opacity: 0.75;
-  }
-  100% {
-    transform: translateX(370%) scaleX(1.05);
-    opacity: 0;
+    transform: translateY(-2px) scale(1.025);
+    box-shadow: 0 14px 30px rgba(122, 0, 60, 0.3), 0 0 22px rgba(230, 30, 110, 0.24), inset 0 0 0 1px rgba(255, 255, 255, 0.24);
   }
 }
 
 @media (max-width: 720px) {
-  .hero h1 {
-    padding-bottom: 0.24em;
-  }
-
-  .hero h1::before,
-  .hero h1::after {
-    height: 7px;
+  .hero-highlight {
+    border-radius: 7px;
+    padding: 0 0.12em 0.06em;
   }
 
   .comment-rating {
