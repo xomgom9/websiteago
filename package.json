@@ -5,12 +5,12 @@
     "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
-    "postgres": "latest",
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
+    "lucide-react": "latest",
+    "playwright": "^1.61.0",
+    "postgres": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "lucide-react": "latest"
-  },
-  "devDependencies": {}
+    "vite": "latest"
+  }
 }
