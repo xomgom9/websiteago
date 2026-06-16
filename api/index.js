@@ -20,42 +20,62 @@ const adminTrackingLinksHandler = require("./admin/_tracking-links");
 // Sale handlers
 const saleDashboardHandler = require("./sale/_dashboard");
 
-module.exports = async function handler(req, res) {
-  const parsedUrl = url.parse(req.url, true);
-  const pathname = parsedUrl.pathname.replace(/\/$/, "");
+function sendJson(res, statusCode, payload) {
+  res.statusCode = statusCode;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(payload));
+}
 
-  // Route request to the appropriate handler
-  switch (pathname) {
-    case "/api/lead":
-      return leadHandler(req, res);
-    case "/api/login":
-      return loginHandler(req, res);
-    case "/api/logout":
-      return logoutHandler(req, res);
-    case "/api/me":
-      return meHandler(req, res);
-    case "/api/reel-comments":
-      return reelCommentsHandler(req, res);
-    case "/api/reel-likes":
-      return reelLikesHandler(req, res);
-    case "/api/reel-state":
-      return reelStateHandler(req, res);
-    case "/api/tracking-click":
-      return trackingClickHandler(req, res);
-    case "/api/tracking-interaction":
-      return trackingInteractionHandler(req, res);
-    case "/api/admin/dashboard":
-      return adminDashboardHandler(req, res);
-    case "/api/admin/leads":
-      return adminLeadsHandler(req, res);
-    case "/api/admin/sales":
-      return adminSalesHandler(req, res);
-    case "/api/admin/tracking-links":
-      return adminTrackingLinksHandler(req, res);
-    case "/api/sale/dashboard":
-      return saleDashboardHandler(req, res);
-    default:
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ error: `Not found: ${pathname}` }));
+function getRoutedPath(req) {
+  const parsedUrl = url.parse(req.url, true);
+  const routeValue = parsedUrl.query.route || parsedUrl.query.path;
+  const route = Array.isArray(routeValue) ? routeValue.join("/") : String(routeValue || "");
+
+  if (route) {
+    return `/api/${route.replace(/^\/+/, "")}`.replace(/\/$/, "");
+  }
+
+  return parsedUrl.pathname.replace(/\.js$/, "").replace(/\/$/, "");
+}
+
+module.exports = async function handler(req, res) {
+  const pathname = getRoutedPath(req);
+
+  try {
+    switch (pathname) {
+      case "/api/lead":
+        return leadHandler(req, res);
+      case "/api/login":
+        return loginHandler(req, res);
+      case "/api/logout":
+        return logoutHandler(req, res);
+      case "/api/me":
+        return meHandler(req, res);
+      case "/api/reel-comments":
+        return reelCommentsHandler(req, res);
+      case "/api/reel-likes":
+        return reelLikesHandler(req, res);
+      case "/api/reel-state":
+        return reelStateHandler(req, res);
+      case "/api/tracking-click":
+        return trackingClickHandler(req, res);
+      case "/api/tracking-interaction":
+        return trackingInteractionHandler(req, res);
+      case "/api/admin/dashboard":
+        return adminDashboardHandler(req, res);
+      case "/api/admin/leads":
+        return adminLeadsHandler(req, res);
+      case "/api/admin/sales":
+        return adminSalesHandler(req, res);
+      case "/api/admin/tracking-links":
+        return adminTrackingLinksHandler(req, res);
+      case "/api/sale/dashboard":
+        return saleDashboardHandler(req, res);
+      default:
+        return sendJson(res, 404, { error: `API route not found: ${pathname}` });
+    }
+  } catch (error) {
+    console.error("API router error:", error);
+    return sendJson(res, 500, { error: "API server error.", detail: error.message });
   }
 };
