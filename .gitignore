@@ -6,3 +6,10 @@ dist
 !.env.example
 audit-ux
 scratch
+
+# Screenshots & dev artifacts
+playwright-*.png
+preview-*.png
+audit-*.png
+reference-*.png
+vite-dev.*.log
