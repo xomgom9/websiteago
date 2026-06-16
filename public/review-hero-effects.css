@@ -34,30 +34,21 @@
   display: none !important;
 }
 
-.hero-highlight {
+.hero-highlight,
+.hero-highlight-years {
   display: inline;
   padding: 0;
   margin: 0;
   border-radius: 0;
-  color: #8a0052;
-  background: linear-gradient(90deg, #7a003c 0%, #9d1b70 45%, #e61e6e 100%);
-  background-size: 160% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #f28c00 !important;
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: #f28c00 !important;
   box-shadow: none !important;
   text-shadow: none !important;
   transform: none !important;
-  animation: heroPhraseShine 3.8s ease-in-out infinite;
-}
-
-.hero-highlight-years {
-  background: linear-gradient(90deg, #4b1979 0%, #7a003c 45%, #e61e6e 100%);
-  background-size: 160% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation-delay: 0.35s;
+  animation: none !important;
 }
 
 .hero-subtitle {
@@ -167,17 +158,9 @@
   white-space: nowrap;
 }
 
-@keyframes heroPhraseShine {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
 @media (max-width: 720px) {
-  .hero-highlight {
+  .hero-highlight,
+  .hero-highlight-years {
     display: inline;
   }
 
