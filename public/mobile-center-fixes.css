@@ -1,0 +1,110 @@
+/* Extra mobile centering fixes for specific sections */
+
+@media (max-width: 768px) {
+  .before-after,
+  .customer-trust-intro,
+  .commitments {
+    text-align: center !important;
+  }
+
+  .before-after .section-header,
+  .customer-trust-intro .section-header,
+  .commitments .section-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    text-align: center !important;
+  }
+
+  .before-after .eyebrow,
+  .customer-trust-intro .eyebrow,
+  .commitments .eyebrow {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
+    font-size: 11px !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0 !important;
+  }
+
+  .before-after .section-header h2,
+  .customer-trust-intro .section-header h2,
+  .commitments .section-header h2 {
+    display: block !important;
+    width: 100% !important;
+    max-width: 32ch !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
+    font-size: clamp(20px, 5.2vw, 24px) !important;
+    line-height: 1.08 !important;
+    letter-spacing: -0.035em !important;
+  }
+
+  .before-after .section-header h2 span,
+  .customer-trust-intro .section-header h2 span,
+  .commitments .section-header h2 span {
+    display: inline !important;
+    text-align: center !important;
+  }
+
+  .before-after .section-header p:not(.eyebrow),
+  .customer-trust-intro .section-header p:not(.eyebrow),
+  .commitments .section-header p:not(.eyebrow) {
+    display: block !important;
+    width: 100% !important;
+    max-width: 34ch !important;
+    margin: 8px auto 0 !important;
+    text-align: center !important;
+    font-size: 13.5px !important;
+    line-height: 1.42 !important;
+  }
+
+  .commitments .section-header {
+    margin-bottom: 16px !important;
+  }
+
+  .commitments .section-header h2 {
+    max-width: 24ch !important;
+    color: #fff !important;
+  }
+
+  .commitments .section-header p:not(.eyebrow) {
+    max-width: 32ch !important;
+    color: #fff !important;
+  }
+
+  .customer-trust-intro .section-header h2 {
+    max-width: 28ch !important;
+  }
+
+  .before-after .section-header h2 {
+    max-width: 30ch !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .before-after .section-header h2,
+  .customer-trust-intro .section-header h2,
+  .commitments .section-header h2 {
+    font-size: 19px !important;
+    line-height: 1.08 !important;
+  }
+
+  .before-after .section-header p:not(.eyebrow),
+  .customer-trust-intro .section-header p:not(.eyebrow),
+  .commitments .section-header p:not(.eyebrow) {
+    font-size: 12.5px !important;
+    line-height: 1.38 !important;
+  }
+}
