@@ -6,6 +6,12 @@ const {
   verifyToken
 } = require("../_db");
 
+function getBaseUrl(req) {
+  const host = req.headers["x-forwarded-host"] || req.headers.host || "localhost";
+  const proto = req.headers["x-forwarded-proto"] || (String(host).includes("localhost") ? "http" : "https");
+  return `${proto}://${host}`;
+}
+
 module.exports = async function handler(req, res) {
   try {
     await ensureTables();
@@ -22,7 +28,6 @@ module.exports = async function handler(req, res) {
     const idParam = url.searchParams.get("id");
     const linkId = idParam ? Number(idParam) : null;
 
-    // 1. GET Request: List all tracking links
     if (req.method === "GET") {
       const links = await sql`
         SELECT 
@@ -43,6 +48,7 @@ module.exports = async function handler(req, res) {
         ok: true,
         links: links.map(l => ({
           ...l,
+          tracking_url: String(l.tracking_url || "").replace(/^http:\/\/websiteago\.vercel\.app/i, "https://websiteago.vercel.app"),
           id: Number(l.id),
           sale_id: Number(l.sale_id),
           total_clicks: l.total_clicks || 0,
@@ -52,7 +58,6 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    // 2. POST Request: Create a new tracking link
     if (req.method === "POST") {
       const body = await req.body || await require("../_db").readBody(req);
       const saleId = Number(body.saleId || body.sale_id);
@@ -64,21 +69,19 @@ module.exports = async function handler(req, res) {
         return;
       }
 
-      // Check if sale agent exists
       const [sale] = await sql`SELECT id, sale_code FROM sales WHERE id = ${saleId} AND status <> 'deleted' LIMIT 1`;
       if (!sale) {
         sendJson(res, 404, { error: "Sale agent not found." });
         return;
       }
 
-      // Check if refCode is already taken
       const [existingLink] = await sql`SELECT id FROM tracking_links WHERE ref_code = ${refCode} LIMIT 1`;
       if (existingLink) {
         sendJson(res, 400, { error: "This ref code is already used in a tracking link." });
         return;
       }
 
-      const trackingUrl = `http://${req.headers.host || "localhost"}/?ref=${refCode}`;
+      const trackingUrl = `${getBaseUrl(req)}/?ref=${encodeURIComponent(refCode)}`;
       const [newLink] = await sql`
         INSERT INTO tracking_links (sale_id, ref_code, tracking_url, status, note)
         VALUES (${saleId}, ${refCode}, ${trackingUrl}, 'active', ${note})
@@ -96,7 +99,6 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    // 3. PUT Request: Edit tracking link note
     if (req.method === "PUT") {
       if (!linkId) {
         sendJson(res, 400, { error: "Link ID parameter is required." });
@@ -116,7 +118,6 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    // 4. PATCH Request: Toggle status (active / inactive)
     if (req.method === "PATCH") {
       if (!linkId) {
         sendJson(res, 400, { error: "Link ID parameter is required." });
@@ -141,7 +142,6 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    // 5. DELETE Request: Soft delete tracking link
     if (req.method === "DELETE") {
       if (!linkId) {
         sendJson(res, 400, { error: "Link ID parameter is required." });
