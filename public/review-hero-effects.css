@@ -1,37 +1,13 @@
-/* Extra rating stars and hero sparkle effects */
+/* Rating stars and text-focused hero effects */
 .hero {
   position: relative;
   isolation: isolate;
 }
 
+/* Keep the hero clean: effects are applied directly to the headline text. */
 .hero::before,
 .hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.hero::before {
-  background:
-    radial-gradient(circle at 18% 18%, rgba(255, 194, 71, 0.62) 0 2px, transparent 3px),
-    radial-gradient(circle at 37% 28%, rgba(255, 255, 255, 0.9) 0 1.5px, transparent 3px),
-    radial-gradient(circle at 62% 17%, rgba(255, 194, 71, 0.48) 0 2px, transparent 4px),
-    radial-gradient(circle at 76% 42%, rgba(230, 30, 110, 0.25) 0 3px, transparent 6px),
-    radial-gradient(circle at 24% 76%, rgba(255, 255, 255, 0.85) 0 2px, transparent 4px),
-    radial-gradient(circle at 86% 78%, rgba(255, 194, 71, 0.55) 0 2px, transparent 4px);
-  opacity: 0.9;
-  animation: heroSparkleDrift 7s ease-in-out infinite alternate;
-}
-
-.hero::after {
-  background:
-    radial-gradient(circle at 28% 38%, rgba(255, 194, 71, 0.42), transparent 9%),
-    radial-gradient(circle at 74% 20%, rgba(255, 79, 135, 0.26), transparent 12%),
-    radial-gradient(circle at 66% 84%, rgba(255, 255, 255, 0.58), transparent 10%);
-  filter: blur(1px);
-  animation: heroGlowPulse 4.5s ease-in-out infinite;
+  display: none !important;
 }
 
 .hero-copy,
@@ -43,52 +19,46 @@
 .hero h1 {
   position: relative;
   display: inline-block;
-  background: linear-gradient(90deg, #2d0f1f 0%, #7a003c 42%, #e61e6e 58%, #2d0f1f 100%);
-  background-size: 220% 100%;
+  padding-bottom: 0.18em;
+  background: linear-gradient(90deg, #2d0f1f 0%, #7a003c 32%, #e61e6e 52%, #7a003c 70%, #2d0f1f 100%);
+  background-size: 230% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 12px 34px rgba(122, 0, 60, 0.12);
-  animation: heroTitleShine 5.5s ease-in-out infinite;
-}
-
-.hero h1::before,
-.hero h1::after {
-  position: absolute;
-  color: #ffc247;
-  font-size: clamp(18px, 2.2vw, 30px);
-  line-height: 1;
-  text-shadow: 0 0 12px rgba(255, 194, 71, 0.75);
-  animation: titleStarTwinkle 1.9s ease-in-out infinite alternate;
+  text-shadow: 0 12px 34px rgba(122, 0, 60, 0.13);
+  animation: heroTextShine 4.8s ease-in-out infinite;
 }
 
 .hero h1::before {
-  content: "✦";
-  top: -0.28em;
-  right: -0.34em;
+  content: "";
+  position: absolute;
+  left: -0.02em;
+  right: -0.02em;
+  bottom: 0.02em;
+  height: clamp(7px, 0.9vw, 12px);
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffc247 0%, #ff8fb3 36%, #e61e6e 58%, #ffc247 100%);
+  background-size: 240% 100%;
+  box-shadow: 0 8px 20px rgba(230, 30, 110, 0.23), 0 0 18px rgba(255, 194, 71, 0.33);
+  transform-origin: left center;
+  animation: heroUnderlineSweep 3.6s ease-in-out infinite;
 }
 
 .hero h1::after {
-  content: "✧";
-  left: -0.34em;
-  bottom: -0.22em;
-  animation-delay: 0.65s;
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0.02em;
+  width: 23%;
+  height: clamp(7px, 0.9vw, 12px);
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+  filter: blur(0.2px);
+  animation: heroUnderlineGlint 2.6s ease-in-out infinite;
 }
 
 .hero-subtitle {
   position: relative;
-}
-
-.hero-subtitle::after {
-  content: "";
-  display: block;
-  width: min(260px, 76%);
-  height: 4px;
-  margin-top: 14px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, #ffc247, #ff4f87, transparent);
-  background-size: 200% 100%;
-  animation: heroUnderlineFlow 3.8s linear infinite;
 }
 
 .comment-card.notification-card {
@@ -160,29 +130,7 @@
   white-space: nowrap;
 }
 
-@keyframes heroSparkleDrift {
-  from {
-    transform: translate3d(-8px, -5px, 0) scale(1);
-    opacity: 0.72;
-  }
-  to {
-    transform: translate3d(10px, 7px, 0) scale(1.04);
-    opacity: 1;
-  }
-}
-
-@keyframes heroGlowPulse {
-  0%, 100% {
-    opacity: 0.52;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.9;
-    transform: scale(1.03);
-  }
-}
-
-@keyframes heroTitleShine {
+@keyframes heroTextShine {
   0%, 100% {
     background-position: 0% 50%;
   }
@@ -191,33 +139,44 @@
   }
 }
 
-@keyframes titleStarTwinkle {
-  from {
-    transform: scale(0.82) rotate(-8deg);
-    opacity: 0.55;
+@keyframes heroUnderlineSweep {
+  0%, 100% {
+    background-position: 0% 50%;
+    transform: scaleX(0.92);
+    opacity: 0.9;
   }
-  to {
-    transform: scale(1.22) rotate(9deg);
+  50% {
+    background-position: 100% 50%;
+    transform: scaleX(1);
     opacity: 1;
   }
 }
 
-@keyframes heroUnderlineFlow {
-  from {
-    background-position: 0% 50%;
+@keyframes heroUnderlineGlint {
+  0% {
+    transform: translateX(-15%) scaleX(0.7);
+    opacity: 0;
   }
-  to {
-    background-position: 200% 50%;
+  18% {
+    opacity: 0.9;
+  }
+  58% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translateX(370%) scaleX(1.05);
+    opacity: 0;
   }
 }
 
 @media (max-width: 720px) {
-  .hero h1::before {
-    right: 0;
+  .hero h1 {
+    padding-bottom: 0.24em;
   }
 
+  .hero h1::before,
   .hero h1::after {
-    left: 0;
+    height: 7px;
   }
 
   .comment-rating {
