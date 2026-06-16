@@ -58,11 +58,42 @@
     });
   }
 
-  function start() {
+  function makeText(value) {
+    return document.createTextNode(value);
+  }
+
+  function makeHighlight(value, className) {
+    const span = document.createElement('span');
+    span.className = `hero-highlight ${className}`;
+    span.textContent = value;
+    return span;
+  }
+
+  function highlightHeroHeadline() {
+    const heading = document.querySelector('.hero h1');
+    if (!heading || heading.dataset.highlightReady === '1') return;
+    const text = heading.textContent.trim().replace(/\s+/g, ' ');
+    if (text !== 'Still Hoping for a Baby After Months or Years of Trying?') return;
+
+    heading.textContent = '';
+    heading.setAttribute('aria-label', text);
+    heading.appendChild(makeText('Still Hoping for a Baby '));
+    heading.appendChild(makeHighlight('After Months', 'hero-highlight-months'));
+    heading.appendChild(makeText(' or '));
+    heading.appendChild(makeHighlight('Years of Trying?', 'hero-highlight-years'));
+    heading.dataset.highlightReady = '1';
+  }
+
+  function applyEnhancements() {
+    highlightHeroHeadline();
     decorateReviewCards();
-    const observer = new MutationObserver(decorateReviewCards);
+  }
+
+  function start() {
+    applyEnhancements();
+    const observer = new MutationObserver(applyEnhancements);
     observer.observe(document.body, { childList: true, subtree: true });
-    window.setInterval(decorateReviewCards, 1200);
+    window.setInterval(applyEnhancements, 1200);
   }
 
   if (document.readyState === 'loading') {
