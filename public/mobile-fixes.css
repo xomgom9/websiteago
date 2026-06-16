@@ -1,0 +1,259 @@
+/* Mobile layout overrides for real-device readability */
+
+@media (max-width: 768px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  body {
+    padding-bottom: 76px;
+  }
+
+  .section {
+    padding-left: 22px !important;
+    padding-right: 22px !important;
+    padding-top: 34px !important;
+    padding-bottom: 34px !important;
+  }
+
+  .section-header {
+    width: 100%;
+    max-width: 520px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-bottom: 18px !important;
+    text-align: center !important;
+  }
+
+  .section-header h2,
+  .final-cta h2,
+  .happy-copy h3,
+  .fibroid-title-card h2,
+  .form-shell form h2 {
+    max-width: 14ch;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
+    font-size: clamp(30px, 8vw, 40px) !important;
+    line-height: 1.12 !important;
+    letter-spacing: -0.02em !important;
+    text-wrap: balance;
+  }
+
+  .section-header p:not(.eyebrow),
+  .hero-subtitle,
+  .final-cta p {
+    max-width: 34ch;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
+    font-size: 16px !important;
+    line-height: 1.45 !important;
+  }
+
+  .eyebrow {
+    text-align: center !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+  }
+
+  .form-shell,
+  .form-grid,
+  .form-grid-compact,
+  .phone-combo,
+  .phone-combo-compact,
+  .address-field,
+  .feedback-band,
+  .offer-box,
+  .comparison-table,
+  .review-grid,
+  .chat-proof-grid,
+  .authority-grid,
+  .trust-intro-grid,
+  .receiving-grid,
+  .cert-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-shell form {
+    padding: 22px 18px !important;
+  }
+
+  label {
+    gap: 6px !important;
+  }
+
+  input,
+  select,
+  textarea,
+  .custom-select-trigger {
+    min-height: 52px !important;
+    font-size: 16px !important;
+  }
+
+  textarea {
+    min-height: 120px !important;
+  }
+
+  .cta {
+    width: auto !important;
+    max-width: min(100%, 330px) !important;
+    min-height: 50px !important;
+    padding: 13px 22px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
+    white-space: normal !important;
+  }
+
+  .cta span {
+    display: inline-block !important;
+    max-width: 24ch !important;
+    text-align: center !important;
+    line-height: 1.12 !important;
+  }
+
+  .section > .cta {
+    margin-top: 18px !important;
+  }
+
+  .sticky-mobile-cta {
+    bottom: 16px !important;
+    max-width: calc(100vw - 44px) !important;
+    padding: 11px 20px !important;
+    z-index: 35 !important;
+  }
+
+  .card-grid.six,
+  .card-grid.four,
+  .honest-grid,
+  .commitment-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+
+  .commitment-card,
+  .honest-card,
+  .soft-card,
+  .review-card {
+    padding: 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .commitment-card h3,
+  .honest-card h3,
+  .soft-card h3 {
+    font-size: 17px !important;
+    line-height: 1.18 !important;
+    text-align: center !important;
+  }
+
+  .commitment-card p,
+  .honest-card p,
+  .soft-card p {
+    font-size: 14px !important;
+    line-height: 1.35 !important;
+    text-align: center !important;
+  }
+
+  .receiving-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .receiving-grid article {
+    max-width: 330px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .product-catalog .section-header,
+  .customer-trust-intro .section-header {
+    padding-left: 22px !important;
+    padding-right: 22px !important;
+  }
+
+  .catalog-card {
+    flex: 0 0 210px !important;
+  }
+
+  .catalog-card h3 {
+    font-size: 18px !important;
+    line-height: 1.15 !important;
+  }
+
+  .benefit-card h3,
+  .concern-card h3 {
+    font-size: 16px !important;
+    line-height: 1.18 !important;
+  }
+
+  .ba-caption {
+    grid-template-columns: 1fr !important;
+    text-align: center !important;
+  }
+
+  .ba-caption p {
+    text-align: center !important;
+  }
+
+  .cert-image {
+    height: auto !important;
+    min-height: auto !important;
+  }
+
+  .cert-image img {
+    height: auto !important;
+    max-height: none !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .section {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  .section-header h2,
+  .final-cta h2,
+  .happy-copy h3,
+  .fibroid-title-card h2,
+  .form-shell form h2 {
+    max-width: 13ch;
+    font-size: clamp(28px, 8.2vw, 36px) !important;
+    line-height: 1.1 !important;
+  }
+
+  .section-header p:not(.eyebrow) {
+    max-width: 31ch;
+  }
+
+  .card-grid.six,
+  .card-grid.four,
+  .honest-grid,
+  .commitment-grid {
+    gap: 10px !important;
+  }
+
+  .commitment-card,
+  .honest-card,
+  .soft-card {
+    padding: 12px 10px !important;
+  }
+
+  .commitment-card .commitment-icon {
+    width: 46px !important;
+    height: 46px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .cta {
+    max-width: 300px !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  .cta span {
+    max-width: 22ch !important;
+  }
+}
