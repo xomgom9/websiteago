@@ -1,17 +1,17 @@
 (() => {
-  const FDA_2026_SRC = "/assets/fda-certificate-2026-image.webp?v=20260617-image-only";
+  const FDA_2026_SRC = "/assets/a364b910d090a81e8e6e11fa63db122b_1781659008_pvu8tflq.png?v=20260617-new-png";
 
   function swapFdaCertificate() {
     const fdaImages = document.querySelectorAll(".cert-image-fda img");
     let swapped = false;
 
     fdaImages.forEach((img) => {
-      if (img.dataset.fda2026 === "image-only") return;
+      if (img.dataset.fda2026 === "new-png") return;
       img.src = FDA_2026_SRC;
       img.alt = "FDA certificate placeholder";
       img.loading = "lazy";
       img.decoding = "async";
-      img.dataset.fda2026 = "image-only";
+      img.dataset.fda2026 = "new-png";
       img.style.display = "block";
       img.style.width = "100%";
       img.style.height = "auto";
