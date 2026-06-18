@@ -72,6 +72,13 @@ function formatLeadLine(icon, label, value) {
   return `${icon} <b>${label}:</b> ${cleanValue}\n`;
 }
 
+function getSaleDisplayName(attribution) {
+  if (attribution.saleName) return attribution.saleName;
+  if (attribution.refCode === "007") return "Trịnh Minh Hùng";
+  if (!attribution.refCode || attribution.refCode === "organic") return "Organic / Không có sale";
+  return attribution.refCode;
+}
+
 function buildTelegramMessage({ source, customerName, customerPhone, customerEmail, message, fields, attribution, landingPage, sourceUrl, ipAddress, userAgent }) {
   const device = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent) ? "Mobile" : "Desktop";
 
@@ -85,7 +92,7 @@ function buildTelegramMessage({ source, customerName, customerPhone, customerEma
     formatLeadLine("🏥", "IVF/IUI", fields.path || fields.ivf || fields.iui) +
     formatLeadLine("📍", "Địa chỉ", fields.address || fields["popup-address"]) +
     formatLeadLine("📝", "Tình trạng", fields.concern || fields.message || message) +
-    formatLeadLine("🔗", "Mã sale/ref", attribution.saleName ? `${attribution.refCode} - ${attribution.saleName}` : attribution.refCode) +
+    formatLeadLine("👩‍💼", "Sale phụ trách", getSaleDisplayName(attribution)) +
     formatLeadLine("🌐", "Trang", landingPage || sourceUrl) +
     formatLeadLine("📱", "Thiết bị", device) +
     formatLeadLine("💻", "IP", ipAddress);
@@ -131,8 +138,8 @@ async function sendTelegramTest(req, res) {
       address: requestUrl.searchParams.get("address") || "United States",
     },
     attribution: {
-      refCode: requestUrl.searchParams.get("ref") || "test",
-      saleName: "Telegram Test",
+      refCode: requestUrl.searchParams.get("ref") || "007",
+      saleName: requestUrl.searchParams.get("sale") || "Trịnh Minh Hùng",
     },
     landingPage: "/api/lead?test=telegram",
     sourceUrl: req.headers.referer || "Direct test link",
