@@ -6,6 +6,8 @@ const {
   parseCookies,
 } = require("./_db");
 
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "-5371613216";
+
 function normalize(value, max = 255) {
   return String(value || "").trim().slice(0, max);
 }
@@ -55,6 +57,59 @@ async function resolveAttribution(sql, req, body) {
     saleName: tracking ? tracking.sale_name : null,
     trackingUrl: tracking ? tracking.tracking_url : null,
   };
+}
+
+function escapeHtml(value) {
+  return normalize(value, 5000)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function formatLeadLine(icon, label, value) {
+  const cleanValue = escapeHtml(value);
+  if (!cleanValue) return "";
+  return `${icon} <b>${label}:</b> ${cleanValue}\n`;
+}
+
+function buildTelegramMessage({ source, customerName, customerPhone, customerEmail, message, fields, attribution, landingPage, sourceUrl, ipAddress, userAgent }) {
+  const device = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent) ? "Mobile" : "Desktop";
+
+  return `🔔 <b>LEAD MỚI TỪ WEBSITE</b>\n\n` +
+    formatLeadLine("💬", "Nguồn form", source) +
+    formatLeadLine("👤", "Tên khách", customerName) +
+    formatLeadLine("📞", "Số điện thoại", customerPhone) +
+    formatLeadLine("📧", "Email", customerEmail) +
+    formatLeadLine("🎂", "Tuổi", fields.age) +
+    formatLeadLine("⏳", "Mong con bao lâu", fields.trying) +
+    formatLeadLine("🏥", "IVF/IUI", fields.path || fields.ivf || fields.iui) +
+    formatLeadLine("📍", "Địa chỉ", fields.address || fields["popup-address"]) +
+    formatLeadLine("📝", "Tình trạng", fields.concern || fields.message || message) +
+    formatLeadLine("🔗", "Mã sale/ref", attribution.saleName ? `${attribution.refCode} - ${attribution.saleName}` : attribution.refCode) +
+    formatLeadLine("🌐", "Trang", landingPage || sourceUrl) +
+    formatLeadLine("📱", "Thiết bị", device) +
+    formatLeadLine("💻", "IP", ipAddress);
+}
+
+async function sendTelegramLeadNotification(payload) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  if (!botToken || !TELEGRAM_CHAT_ID) return;
+
+  const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: TELEGRAM_CHAT_ID,
+      text: buildTelegramMessage(payload),
+      parse_mode: "HTML",
+      disable_web_page_preview: true,
+    }),
+  });
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    throw new Error(`Telegram notification failed: ${response.status} ${detail}`);
+  }
 }
 
 module.exports = async function handler(req, res) {
@@ -145,33 +200,22 @@ module.exports = async function handler(req, res) {
       RETURNING id, sale_id, tracking_link_id, ref_code, customer_name, customer_phone, customer_email, message, source_url, landing_page, visitor_id, created_at
     `;
 
-    // Send Telegram Bot Notification if configured
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
-    if (botToken && chatId) {
-      try {
-        const text = `🔔 *New Lead Received!*
-💬 *Source:* ${source}
-👤 *Name:* ${customerName}
-📞 *Phone:* ${customerPhone}
-${fields.age ? `🎂 *Age:* ${fields.age}\n` : ""}${fields.trying ? `⏳ *Trying for:* ${fields.trying}\n` : ""}${fields.path ? `🏥 *IVF Status:* ${fields.path}\n` : ""}${fields.address || fields["popup-address"] ? `📍 *Address:* ${fields.address || fields["popup-address"]}\n` : ""}${fields.concern ? `📝 *Concern:* ${fields.concern}\n` : ""}
-🔗 *Referral:* \`${attribution.refCode}\`${attribution.saleName ? ` (${attribution.saleName})` : ""}
-🌐 *Page:* ${landingPage}
-📱 *Device:* ${normalize(body.device || "", 80) || (/Mobi|Android|iPhone|iPad|iPod/i.test(userAgent) ? "mobile" : "desktop")}
-💻 *IP:* ${ipAddress}`;
-
-        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: text,
-            parse_mode: "Markdown",
-          }),
-        });
-      } catch (tgError) {
-        console.error("Failed to send Telegram notification:", tgError);
-      }
+    try {
+      await sendTelegramLeadNotification({
+        source,
+        customerName,
+        customerPhone,
+        customerEmail,
+        message,
+        fields,
+        attribution,
+        landingPage,
+        sourceUrl,
+        ipAddress,
+        userAgent,
+      });
+    } catch (tgError) {
+      console.error("Failed to send Telegram notification:", tgError);
     }
 
     sendJson(res, 200, {
