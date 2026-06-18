@@ -93,7 +93,7 @@ function buildTelegramMessage({ source, customerName, customerPhone, customerEma
 
 async function sendTelegramLeadNotification(payload) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  if (!botToken || !TELEGRAM_CHAT_ID) return;
+  if (!botToken || !TELEGRAM_CHAT_ID) return false;
 
   const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
     method: "POST",
@@ -110,11 +110,60 @@ async function sendTelegramLeadNotification(payload) {
     const detail = await response.text().catch(() => "");
     throw new Error(`Telegram notification failed: ${response.status} ${detail}`);
   }
+
+  return true;
+}
+
+async function sendTelegramTest(req, res) {
+  const requestUrl = new URL(req.url, "https://websiteago.local");
+  const now = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+  const sent = await sendTelegramLeadNotification({
+    source: "TEST - Không cần điền form",
+    customerName: requestUrl.searchParams.get("name") || "Khách test website",
+    customerPhone: requestUrl.searchParams.get("phone") || "0900000000",
+    customerEmail: requestUrl.searchParams.get("email") || "",
+    message: requestUrl.searchParams.get("message") || `Tin test gửi bot lúc ${now}`,
+    fields: {
+      age: requestUrl.searchParams.get("age") || "38",
+      trying: requestUrl.searchParams.get("trying") || "3 năm",
+      path: requestUrl.searchParams.get("path") || "Chưa IVF/IUI",
+      concern: requestUrl.searchParams.get("concern") || "Test chức năng báo lead Telegram",
+      address: requestUrl.searchParams.get("address") || "United States",
+    },
+    attribution: {
+      refCode: requestUrl.searchParams.get("ref") || "test",
+      saleName: "Telegram Test",
+    },
+    landingPage: "/api/lead?test=telegram",
+    sourceUrl: req.headers.referer || "Direct test link",
+    ipAddress: getClientIp(req),
+    userAgent: normalize(req.headers["user-agent"] || "", 500),
+  });
+
+  sendJson(res, 200, {
+    ok: true,
+    telegramSent: sent,
+    chatId: TELEGRAM_CHAT_ID,
+    message: sent ? "Telegram test lead sent." : "TELEGRAM_BOT_TOKEN is missing, so no Telegram message was sent.",
+  });
 }
 
 module.exports = async function handler(req, res) {
+  const requestUrl = new URL(req.url, "https://websiteago.local");
+  const isTelegramTest = req.method === "GET" && requestUrl.searchParams.get("test") === "telegram";
+
+  if (isTelegramTest) {
+    try {
+      await sendTelegramTest(req, res);
+    } catch (error) {
+      console.error("Telegram test failed:", error);
+      sendJson(res, 500, { ok: false, error: error.message || "Telegram test failed." });
+    }
+    return;
+  }
+
   if (req.method !== "POST") {
-    res.setHeader("Allow", "POST");
+    res.setHeader("Allow", "POST, GET");
     sendJson(res, 405, { error: "Method not allowed." });
     return;
   }
