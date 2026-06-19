@@ -8,8 +8,140 @@ const {
 
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "-5371613216";
 
+const DIAL_CODE_COUNTRIES = {
+  "+1": "United States",
+  "+84": "Vietnam",
+  "+66": "Thailand",
+  "+65": "Singapore",
+  "+60": "Malaysia",
+  "+62": "Indonesia",
+  "+63": "Philippines",
+  "+61": "Australia",
+  "+44": "United Kingdom",
+};
+
+const NANP_AREA_CODES = {
+  "504": "New Orleans, Louisiana, USA",
+};
+
 function normalize(value, max = 255) {
   return String(value || "").trim().slice(0, max);
+}
+
+function onlyDigits(value) {
+  return normalize(value, 120).replace(/\D/g, "");
+}
+
+function normalizeDialCode(value) {
+  const cleanValue = normalize(value, 40);
+  if (!cleanValue) return "";
+  const plusMatch = cleanValue.match(/\+\d{1,4}/);
+  if (plusMatch) return plusMatch[0];
+  const digits = cleanValue.replace(/\D/g, "");
+  return digits ? `+${digits.slice(0, 4)}` : "";
+}
+
+function getCountryFromFields(fields, dialCode) {
+  const explicitCountry = normalize(
+    fields.country ||
+      fields.country_name ||
+      fields.countryName ||
+      fields.phone_country ||
+      fields.phoneCountry ||
+      fields["phone-country"] ||
+      fields["popup-phone-country"],
+    120
+  );
+  const address = normalize(fields.address || fields["popup-address"] || "", 300);
+  const lookupText = `${explicitCountry} ${address}`.toLowerCase();
+
+  if (/canada|ontario|toronto|vancouver|british columbia|alberta|quebec/.test(lookupText)) return "Canada";
+  if (/united states|usa|u\.s\.|america|new york|california|texas|florida|louisiana|new orleans|prieur/.test(lookupText)) {
+    return "United States";
+  }
+
+  return DIAL_CODE_COUNTRIES[dialCode] || "Unknown";
+}
+
+function inferDialCode(rawPhone, fields) {
+  const fieldDialCode = normalizeDialCode(
+    fields["phone-country-code"] ||
+      fields.phone_country_code ||
+      fields.phoneCountryCode ||
+      fields.country_code ||
+      fields.countryCode ||
+      fields.dial_code ||
+      fields.dialCode ||
+      fields["popup-phone-country-code"] ||
+      fields.popup_phone_country_code
+  );
+  if (fieldDialCode) return fieldDialCode;
+
+  const cleanPhone = normalize(rawPhone, 80);
+  if (cleanPhone.startsWith("+")) {
+    const knownCodes = Object.keys(DIAL_CODE_COUNTRIES).sort((a, b) => b.length - a.length);
+    const matchedCode = knownCodes.find((code) => cleanPhone.startsWith(code));
+    if (matchedCode) return matchedCode;
+  }
+
+  const digits = onlyDigits(cleanPhone);
+  if (digits.length === 11 && digits.startsWith("1")) return "+1";
+
+  const address = normalize(fields.address || fields["popup-address"] || "", 300).toLowerCase();
+  if (/vietnam|việt nam|hanoi|ha noi|ho chi minh|hồ chí minh/.test(address)) return "+84";
+
+  return "+1";
+}
+
+function getLocalPhoneDigits(rawPhone, dialCode) {
+  const digits = onlyDigits(rawPhone);
+  const dialDigits = dialCode.replace(/\D/g, "");
+  let localDigits = digits;
+
+  if (normalize(rawPhone, 80).startsWith("+") && dialDigits && digits.startsWith(dialDigits)) {
+    localDigits = digits.slice(dialDigits.length);
+  }
+
+  if (dialCode === "+1" && localDigits.length === 11 && localDigits.startsWith("1")) {
+    localDigits = localDigits.slice(1);
+  }
+
+  return localDigits;
+}
+
+function formatInternationalPhone(rawPhone, dialCode, localDigits) {
+  if (!rawPhone) return "";
+  if (dialCode === "+1" && localDigits.length === 10) {
+    return `+1 (${localDigits.slice(0, 3)}) ${localDigits.slice(3, 6)}-${localDigits.slice(6)}`;
+  }
+  if (normalize(rawPhone, 80).startsWith("+")) return normalize(rawPhone, 80);
+  return `${dialCode} ${localDigits || normalize(rawPhone, 80)}`;
+}
+
+function getAreaDisplay(dialCode, localDigits) {
+  if (!localDigits) return "";
+  if (dialCode === "+1" && localDigits.length >= 3) {
+    const areaCode = localDigits.slice(0, 3);
+    return NANP_AREA_CODES[areaCode] ? `${areaCode} - ${NANP_AREA_CODES[areaCode]}` : areaCode;
+  }
+  if (localDigits.length >= 3) return localDigits.slice(0, 3);
+  return localDigits;
+}
+
+function getPhoneInfo(rawPhone, fields = {}) {
+  const dialCode = inferDialCode(rawPhone, fields);
+  const localDigits = getLocalPhoneDigits(rawPhone, dialCode);
+  const countryName = getCountryFromFields(fields, dialCode);
+  const areaDisplay = getAreaDisplay(dialCode, localDigits);
+
+  return {
+    dialCode,
+    countryName,
+    localDigits,
+    formattedPhone: formatInternationalPhone(rawPhone, dialCode, localDigits),
+    countryDisplay: `${countryName} (${dialCode})`,
+    areaDisplay,
+  };
 }
 
 function getReferralFromBody(body) {
@@ -79,13 +211,16 @@ function getSaleDisplayName(attribution) {
   return attribution.refCode;
 }
 
-function buildTelegramMessage({ source, customerName, customerPhone, customerEmail, message, fields, attribution, landingPage, sourceUrl, ipAddress, userAgent }) {
+function buildTelegramMessage({ source, customerName, customerPhone, customerEmail, message, fields, attribution, landingPage, sourceUrl, ipAddress, userAgent, phoneInfo }) {
   const device = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent) ? "Mobile" : "Desktop";
+  const phoneMeta = phoneInfo || getPhoneInfo(customerPhone, fields);
 
   return `🔔 <b>LEAD MỚI TỪ WEBSITE</b>\n\n` +
     formatLeadLine("💬", "Nguồn form", source) +
     formatLeadLine("👤", "Tên khách", customerName) +
-    formatLeadLine("📞", "Số điện thoại", customerPhone) +
+    formatLeadLine("📞", "Số điện thoại", phoneMeta.formattedPhone || customerPhone) +
+    formatLeadLine("🌎", "Quốc gia / mã quốc gia", phoneMeta.countryDisplay) +
+    formatLeadLine("☎️", "Mã vùng / đầu số", phoneMeta.areaDisplay) +
     formatLeadLine("📧", "Email", customerEmail) +
     formatLeadLine("🎂", "Tuổi", fields.age) +
     formatLeadLine("⏳", "Mong con bao lâu", fields.trying) +
@@ -124,19 +259,24 @@ async function sendTelegramLeadNotification(payload) {
 async function sendTelegramTest(req, res) {
   const requestUrl = new URL(req.url, "https://websiteago.local");
   const now = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
+  const customerPhone = requestUrl.searchParams.get("phone") || "5045361797";
+  const fields = {
+    age: requestUrl.searchParams.get("age") || "38",
+    trying: requestUrl.searchParams.get("trying") || "3 năm",
+    path: requestUrl.searchParams.get("path") || "Chưa IVF/IUI",
+    concern: requestUrl.searchParams.get("concern") || "Test chức năng báo lead Telegram",
+    address: requestUrl.searchParams.get("address") || "1620 N Prieur St, New Orleans, Louisiana, United States",
+    "phone-country-code": requestUrl.searchParams.get("countryCode") || "+1",
+  };
+  const phoneInfo = getPhoneInfo(customerPhone, fields);
+
   const sent = await sendTelegramLeadNotification({
     source: "TEST - Không cần điền form",
     customerName: requestUrl.searchParams.get("name") || "Khách test website",
-    customerPhone: requestUrl.searchParams.get("phone") || "0900000000",
+    customerPhone: phoneInfo.formattedPhone,
     customerEmail: requestUrl.searchParams.get("email") || "",
     message: requestUrl.searchParams.get("message") || `Tin test gửi bot lúc ${now}`,
-    fields: {
-      age: requestUrl.searchParams.get("age") || "38",
-      trying: requestUrl.searchParams.get("trying") || "3 năm",
-      path: requestUrl.searchParams.get("path") || "Chưa IVF/IUI",
-      concern: requestUrl.searchParams.get("concern") || "Test chức năng báo lead Telegram",
-      address: requestUrl.searchParams.get("address") || "United States",
-    },
+    fields,
     attribution: {
       refCode: requestUrl.searchParams.get("ref") || "007",
       saleName: requestUrl.searchParams.get("sale") || "Trịnh Minh Hùng",
@@ -145,6 +285,7 @@ async function sendTelegramTest(req, res) {
     sourceUrl: req.headers.referer || "Direct test link",
     ipAddress: getClientIp(req),
     userAgent: normalize(req.headers["user-agent"] || "", 500),
+    phoneInfo,
   });
 
   sendJson(res, 200, {
@@ -181,14 +322,16 @@ module.exports = async function handler(req, res) {
     const source = normalize(body.source || "Landing Form", 120);
     const fields = body.fields && typeof body.fields === "object" ? body.fields : {};
     const customerName = normalize(fields.name || fields.customer_name || fields["customer-name"] || fields["popup-name"], 120);
-    const customerPhone = normalize(fields.phone || fields["customer_phone"] || fields["popup-phone"], 40);
+    const rawCustomerPhone = normalize(fields.phone || fields["customer_phone"] || fields["customer-phone"] || fields["popup-phone"], 80);
+    const phoneInfo = getPhoneInfo(rawCustomerPhone, fields);
+    const customerPhone = normalize(phoneInfo.formattedPhone || rawCustomerPhone, 80);
     const customerEmail = normalize(fields.email || fields.customer_email || "", 180);
     const message = normalize(
       fields.message || fields.concern || fields.note || fields.address || fields["popup-address"] || JSON.stringify(fields),
       5000
     );
 
-    if (!customerName || !customerPhone) {
+    if (!customerName || !rawCustomerPhone) {
       sendJson(res, 400, { error: "Missing required lead fields." });
       return;
     }
@@ -269,6 +412,7 @@ module.exports = async function handler(req, res) {
         sourceUrl,
         ipAddress,
         userAgent,
+        phoneInfo,
       });
     } catch (tgError) {
       console.error("Failed to send Telegram notification:", tgError);
