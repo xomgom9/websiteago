@@ -1,0 +1,42 @@
+/* Mobile sticky CTA button fix: keep the consultation button readable and aligned */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .sticky-mobile-cta {
+    position: fixed !important;
+    left: 16px !important;
+    right: 16px !important;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    max-width: none !important;
+    min-height: 54px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 14px 18px !important;
+    border-radius: 999px !important;
+    font-size: 15.5px !important;
+    font-weight: 900 !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+    white-space: normal !important;
+    transform: none !important;
+    z-index: 60 !important;
+  }
+
+  .sticky-mobile-cta.is-hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(18px) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .sticky-mobile-cta {
+    left: 14px !important;
+    right: 14px !important;
+    font-size: 14px !important;
+  }
+}
