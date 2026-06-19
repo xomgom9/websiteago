@@ -1,6 +1,7 @@
 {
   "scripts": {
     "dev": "vite --host 127.0.0.1",
+    "prebuild": "node scripts/optimize-images.mjs",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1"
   },
@@ -11,6 +12,7 @@
     "postgres": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "sharp": "latest",
     "vite": "latest"
   }
 }
