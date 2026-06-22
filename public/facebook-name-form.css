@@ -1,0 +1,135 @@
+/* Adds the Facebook name lead field and keeps consultation forms responsive. */
+.facebook-name-field {
+  min-width: 0;
+}
+
+.facebook-name-field input,
+.facebook-name-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.form-grid,
+.form-grid-compact {
+  align-items: end;
+}
+
+.form-grid > label,
+.form-grid-compact > label,
+.form-grid > .custom-select-field,
+.form-grid-compact > .custom-select-field,
+.form-grid > .phone-field,
+.form-grid-compact > .phone-field,
+.form-grid > .address-field,
+.form-grid-compact > .address-field {
+  min-width: 0;
+}
+
+.offer-popup-form-panel form {
+  display: grid;
+  gap: 10px;
+}
+
+.offer-popup-form-panel .facebook-name-input {
+  min-height: 44px;
+}
+
+@media (max-width: 900px) {
+  .form-shell,
+  .form-grid,
+  .form-grid-compact,
+  .phone-combo,
+  .phone-combo-compact {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-shell {
+    gap: 14px;
+  }
+
+  .form-shell form {
+    width: 100%;
+    padding: clamp(18px, 5vw, 28px);
+  }
+
+  .form-grid textarea,
+  .form-grid-compact textarea,
+  .form-grid label:has(textarea),
+  .form-grid-compact label:has(textarea) {
+    grid-column: auto;
+  }
+
+  .form-button,
+  .cta.form-button {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .consultation {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .form-shell .section-header {
+    margin-bottom: 14px;
+  }
+
+  .form-grid,
+  .form-grid-compact {
+    gap: 10px;
+  }
+
+  .form-grid label,
+  .form-grid-compact label {
+    gap: 6px;
+    font-size: 15px;
+  }
+
+  .form-grid input,
+  .form-grid select,
+  .form-grid textarea,
+  .form-grid-compact input,
+  .form-grid-compact select,
+  .form-grid-compact textarea,
+  .custom-select-trigger {
+    min-height: 46px;
+    padding: 11px 12px;
+    font-size: 16px;
+  }
+
+  .offer-popup-backdrop {
+    align-items: start;
+    overflow-y: auto;
+    padding: 14px;
+  }
+
+  .offer-popup {
+    grid-template-columns: 1fr !important;
+    width: min(440px, 100%);
+    max-height: none;
+    overflow: visible;
+  }
+
+  .offer-popup-visual {
+    display: none;
+  }
+
+  .offer-popup-form-panel {
+    padding: 22px 16px 18px;
+  }
+
+  .offer-popup-form-panel h2 {
+    margin-right: 42px;
+    font-size: clamp(24px, 7vw, 34px);
+  }
+
+  .offer-popup-form-panel input,
+  .offer-popup-form-panel button,
+  .offer-popup-form-panel .custom-select-trigger {
+    width: 100%;
+    min-height: 46px;
+    font-size: 16px;
+  }
+}
