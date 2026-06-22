@@ -25,6 +25,15 @@
   min-width: 0;
 }
 
+button[disabled],
+input[type="submit"][disabled],
+button[aria-disabled="true"],
+input[type="submit"][aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.72;
+  transform: none !important;
+}
+
 .offer-popup-form-panel form {
   display: grid;
   gap: 10px;
