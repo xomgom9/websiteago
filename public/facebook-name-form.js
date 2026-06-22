@@ -5,6 +5,7 @@
   const POPUP_FIELD_NAME = "popup-facebook-name";
   const MAIN_LABEL_TEXT = "Facebook Name";
   const PLACEHOLDER_TEXT = "Name used on Facebook";
+  const SUBMIT_LOCK_MS = 15000;
 
   function createInput(name) {
     const input = document.createElement("input");
@@ -31,6 +32,67 @@
     return form.querySelector(
       `input[name="${MAIN_FIELD_NAME}"], input[name="${POPUP_FIELD_NAME}"]`
     );
+  }
+
+  function getFormFingerprint(form) {
+    const formData = new FormData(form);
+    const sourceParts = [
+      formData.get("name"),
+      formData.get("popup-name"),
+      formData.get("phone"),
+      formData.get("popup-phone"),
+      formData.get("address"),
+      formData.get("popup-address"),
+      formData.get(MAIN_FIELD_NAME),
+      formData.get(POPUP_FIELD_NAME),
+    ];
+    return sourceParts.map((value) => String(value || "").trim().toLowerCase()).join("|");
+  }
+
+  function setSubmittingState(form, isSubmitting) {
+    const submitButtons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+    submitButtons.forEach((button) => {
+      button.disabled = isSubmitting;
+      button.setAttribute("aria-disabled", String(isSubmitting));
+      if (isSubmitting) {
+        button.dataset.originalText = button.textContent || button.value || "";
+        if (button.tagName === "BUTTON") button.textContent = "Submitting...";
+        if (button.tagName === "INPUT") button.value = "Submitting...";
+      } else if (button.dataset.originalText) {
+        if (button.tagName === "BUTTON") button.textContent = button.dataset.originalText;
+        if (button.tagName === "INPUT") button.value = button.dataset.originalText;
+        delete button.dataset.originalText;
+      }
+    });
+  }
+
+  function preventDuplicateSubmit(event) {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) return;
+    if (!getFacebookInput(form) && !form.querySelector('input[name="name"], input[name="popup-name"]')) return;
+
+    const now = Date.now();
+    const fingerprint = getFormFingerprint(form);
+    const lastFingerprint = form.dataset.lastSubmitFingerprint || "";
+    const lastSubmitAt = Number(form.dataset.lastSubmitAt || 0);
+
+    if (form.dataset.submitting === "true" || (fingerprint && fingerprint === lastFingerprint && now - lastSubmitAt < SUBMIT_LOCK_MS)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return false;
+    }
+
+    form.dataset.submitting = "true";
+    form.dataset.lastSubmitFingerprint = fingerprint;
+    form.dataset.lastSubmitAt = String(now);
+    setSubmittingState(form, true);
+
+    window.setTimeout(() => {
+      form.dataset.submitting = "false";
+      setSubmittingState(form, false);
+    }, SUBMIT_LOCK_MS);
+
+    return true;
   }
 
   function mergeFacebookIntoMessage(form) {
@@ -98,6 +160,7 @@
   }
 
   function start() {
+    document.addEventListener("submit", preventDuplicateSubmit, true);
     enhanceForms();
     const observer = new MutationObserver(() => enhanceForms());
     observer.observe(document.body, { childList: true, subtree: true });
